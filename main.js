@@ -8,7 +8,13 @@ $(document).ready( function() { //when DOM is ready...
 	]);
 
 	app.tasks = new TaskCollection([
-		// test data here
+		{
+			title:'Steal Redvines',
+			description:'Run from coppers',
+			creator:'Honest Abe',
+			assignee:'',
+			status:'unassigned',
+		}
 	]);
 
 	app.gui = new GUI(app.users,

@@ -4,7 +4,7 @@ var UserModel = Backbone.Model.extend({
 	}
 });
 
-var IssueModel = Backbone.Model.extend({
+var TaskModel = Backbone.Model.extend({
 	defaults: {
 		title:'',
 		description:'',
@@ -20,5 +20,5 @@ var UserCollection = Backbone.Collection.extend({
 });
 
 var TaskCollection = Backbone.Collection.extend({
-	model:IssueModel
+	model:TaskModel
 });
