@@ -2,19 +2,34 @@ var GUI = (function(){ //IIFE for all Views
 
 var TaskView = Backbone.View.extend({
 	render: function(){
-		var $title= $("<h4>").text(this.app.tasks.description);
-		var $desc = something;
-		var $creator = something;
-		var $assignee = something;
-		var $statusSel = something;
-		var $statusOpt = something;
+		var $title= $("<h4>").text(this.model.attributes.title);
+		var $desc = $('<h5>').text("Description: " + this.model.attributes.description);
+		var $creator = $('<h6>').text("Creator: " + this.model.attributes.creator);
+		var $assignee = $('<h6>').text("Assigned to: " + this.model.attributes.assignee);
+		var $statusSel = $("<select class='statusSel'>");
+		var $statusOpt1 = $("<option id='unass'>").html("Unassigned");
+		var $statusOpt2 = $("<option id='ass'>").html("Assigned");
+		var $statusOpt3 = $("<option id='prog'>").html("In Progress");
+		var $statusOpt4 = $("<option id='done'>").html("Done");
 		
+		//building dropdown:
+		$statusSel.append($statusOpt1).append($statusOpt2).append($statusOpt3).append($statusOpt4);
+		
+		this.$el.append($title).append($desc).append($creator).append($assignee).append($statusSel);
+		
+		if($statusSel.val()==="unassigned"){
+			$('#unassDiv').append(this.$el);
+		}
 	},
 	initialize: function(opts){
 		this.render();
+		this.model.on("change", this.render, this);
 	},
 	events:{
-		
+		"change .statusSel": "changeStatus"
+	},
+	changeStatus: function(){
+		this.model.set("status", $statusSel.val());
 	}
 });
 
@@ -33,11 +48,28 @@ var UnassignedTasksView = Backbone.View.extend({
 	render: function(){
 		this.$el.html('<p>Unnassigned Div</p>');
 		this.containerDiv.append(this.$el);
+		console.log("unassigned collection is: ", this.collection.where({status:"unassigned"}));
+		this.$el.attr("id","unassDiv");
 	},
 	initialize: function(opts){
 		if(opts){this.containerDiv = opts.containerDiv;}
+		var self = this;
+		var unassigned = this.collection.where({status:"unassigned"});
+		unassigned.forEach(function(tsk){
+			console.log("model is: ", tsk);
+			var task = new TaskView({model:tsk});
+			// self.$el.append(task.$el);
+		});
+		this.listenTo(this.collection, "add", this.addView);
+		this.listenTo(this.collection, "something2", this.something2);
 	},
 	events:{
+		
+	},
+	addView: function(newModel){
+		var task = new TaskView({model:newModel});
+	},
+	something2: function(){
 		
 	}
 });
@@ -45,19 +77,28 @@ var UnassignedTasksView = Backbone.View.extend({
 var UserTasksView = Backbone.View.extend({
 	render: function(){
 		this.$el.html('<p>Assigned Div</p>');
-		this.containerDiv.append(this.$el);
+		this.containerDiv.append(this.$el);	console.log("assigned collection is: ", this.collection.where({status:"assigned"}));
+		this.$el.attr("id","assDiv");
 	},
 	initialize: function(opts){
 		if(opts){this.containerDiv = opts.containerDiv;}
+		this.listenTo(this.collection, "something", this.something);
+		this.listenTo(this.collection, "something2", this.something2);
 	},
 	events:{
+		
+	},
+	something: function(){
+		
+	},
+	something2: function(){
 		
 	}
 });
 
 var UserView = Backbone.View.extend({
 	render: function() {
-		this.$el.html("<p>Hello " + this.model.attributes.username + "</p>");
+		this.$el.html("<h2>Hello " + this.model.attributes.username + "</h2>");
 		this.$el.attr("id","user_view");
 		var $logoutBtn = $('<button id="logout">').text('logout');
 		this.$el.prepend($logoutBtn);
@@ -65,13 +106,17 @@ var UserView = Backbone.View.extend({
 	},
 	initialize: function(opts) {
 		if(opts){this.appdiv=opts.appdiv;}
+		if(opts){this.tasks=opts.tasks;}
+		
 		var unass = new UnassignedTasksView({
 			model:TaskModel,
-			containerDiv: this.$el
+			containerDiv: this.$el,
+			collection: this.tasks
 		});
 		var user = new UserTasksView({
 			model:TaskModel,
-			containerDiv: this.$el
+			containerDiv: this.$el,
+			collection: this.tasks
 		});
 		this.render();
 		unass.render();
@@ -113,6 +158,7 @@ var LoginView = Backbone.View.extend({
 	},
 	initialize: function(opts){
 		if(opts){this.appdiv=opts.appdiv;}
+		if(opts){this.tasks=opts.tasks;}
 		this.render();
 	},
 	events: {
@@ -125,7 +171,8 @@ var LoginView = Backbone.View.extend({
 
 		var userView = new UserView({
 			model:this.collection.models[index],
-			appdiv:this.appdiv
+			appdiv:this.appdiv,
+			tasks: this.tasks
 		});
 		this.remove();
 	}
@@ -135,10 +182,10 @@ var LoginView = Backbone.View.extend({
 // generic ctor to represent interface:
 function GUI(users,tasks,el) {
 	var loginView = new LoginView({
+		tasks: tasks,
 		collection:users, 
 		appdiv: $(el)
 	});
-
 	// users is collection of User models
 	// tasks is collection of Task models
 	// el is selector for where GUI connects in DOM
