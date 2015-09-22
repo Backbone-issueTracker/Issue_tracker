@@ -1,10 +1,10 @@
 var app = {};
 
-$(function() { //when DOM is ready...
+$(document).ready( function() { //when DOM is ready...
 	app.users = new UserCollection([
-		{username:'Person1'},
-		{username:'Person2'},
-		{username:'Person3'}
+		{username:'Sparky'},
+		{username:'Skippy'},
+		{username:'Arturo'}
 	]);
 
 	app.tasks = new TaskCollection([
@@ -14,4 +14,4 @@ $(function() { //when DOM is ready...
 	app.gui = new GUI(app.users,
 						app.tasks,
 						'#app');// selector of main div
-}
+});

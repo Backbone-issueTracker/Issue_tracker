@@ -19,6 +19,6 @@ var UserCollection = Backbone.Collection.extend({
 	model:UserModel
 })
 
-var IssueCollection = Backbone.Collection.extend({
+var TaskCollection = Backbone.Collection.extend({
 	model:IssueModel
 })
