@@ -19,12 +19,16 @@ var TaskView = Backbone.View.extend({
 
 		this.$el.append($title).append($desc).append($creator).append($assignee).append($statusSel);
 
+		if(this.model.attributes.status==="Assigned"){
+			this.$(".ass").attr("selected", "selected");
+		}
+
 		if($statusSel.val()==="Unassigned"){
 			// console.log(this.$el);
 			$('#unassDiv').append(this.$el);
 		}
 		
-		console.log(this.user);
+		// console.log(this.user);
 		
 		if($assignee.val()===this.user){
 			$('#assDiv').append(this.$el);
@@ -39,8 +43,8 @@ var TaskView = Backbone.View.extend({
 		"change select[name='statusSelector']": "changeStatus"
 	},
 	changeStatus: function(){
-		console.log("The value is: ", this.$('select[name="statusSelector"]').val());
-		console.log("model is: ", this.model);
+		// console.log("The value is: ", this.$('select[name="statusSelector"]').val());
+		// console.log("model is: ", this.model);
 		this.model.set("status", this.$("select[name='statusSelector']").val());
 		this.remove();
 	}
@@ -72,7 +76,7 @@ var UnassignedTasksView = Backbone.View.extend({
 		this.render();
 		var unassigned = this.collection.where({status:"Unassigned"});
 		unassigned.forEach(function(element){
-			console.log("element is: ", element);
+			// console.log("element is: ", element);
 			var task = new TaskView({model:element,user:this.user});
 		});
 
@@ -105,7 +109,7 @@ var UserTasksView = Backbone.View.extend({
 		this.render();
 		var usertasks = this.collection.where({assignee:this.user.attributes.username});
 		usertasks.forEach(function(element){
-			console.log("element is: ", element);
+			// console.log("element is: ", element);
 			var task = new TaskView({model:element,user:this.user});
 		});
 		this.listenTo(this.collection, "something", this.something);

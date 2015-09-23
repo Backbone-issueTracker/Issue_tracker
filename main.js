@@ -26,7 +26,7 @@ $(document).ready( function() { //when DOM is ready...
 			title:'Write a book',
 			description:'finish it before i die(GRRM)',
 			creator:'Kanye East',
-			assignee:'Kim',
+			assignee:'Arturo',
 			status:'Assigned'
 		}
 	]);
