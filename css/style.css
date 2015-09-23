@@ -1,3 +1,25 @@
 .list-group-item {
   border-bottom: 3px solid rgba(160,160,160,1.0);
 }
+
+.navbar-brand {
+  background: #df691a;
+  z-index: 100;
+}
+
+.navbar-brand::after {
+  content: " not to do";
+  z-index: -100;
+  animation-name: reveal;
+  animation-duration: 2s;
+  animation-timing-function: ease-in;
+}
+
+@keyframes reveal {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 100;
+  }
+}
