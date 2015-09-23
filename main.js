@@ -13,6 +13,13 @@ $(document).ready( function() { //when DOM is ready...
 			description:'Run from coppers',
 			creator:'Skippy',
 			assignee:'',
+			status:'Unassigned'
+		},
+		{
+			title:'broken one',
+			description:'this one is broken',
+			creator:'Skippy',
+			assignee:'Skippy',
 			status:'Assigned'
 		},
 		{
