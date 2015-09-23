@@ -12,8 +12,8 @@ $(document).ready( function() { //when DOM is ready...
 			title:'Steal Redvines',
 			description:'Run from coppers',
 			creator:'Honest Abe',
-			assignee:'',
-			status:'Unassigned'
+			assignee:'Skippy',
+			status:'Assigned'
 		},
 		{
 			title:'Give Redvines',
