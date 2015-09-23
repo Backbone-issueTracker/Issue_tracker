@@ -11,7 +11,14 @@ $(document).ready( function() { //when DOM is ready...
 		{
 			title:'Steal Redvines',
 			description:'Run from coppers',
-			creator:'Honest Abe',
+			creator:'Skippy',
+			assignee:'',
+			status:'Assigned'
+		},
+		{
+			title:'Something',
+			description:'Something else',
+			creator:'Anyone',
 			assignee:'Skippy',
 			status:'Assigned'
 		},
