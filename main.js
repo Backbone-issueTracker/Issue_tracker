@@ -13,21 +13,21 @@ $(document).ready( function() { //when DOM is ready...
 			description:'Run from coppers',
 			creator:'Honest Abe',
 			assignee:'',
-			status:'unassigned'
+			status:'Unassigned'
 		},
 		{
 			title:'Give Redvines',
 			description:'Hi five coppers',
 			creator:'Evil Abe',
 			assignee:'',
-			status:'unassigned'
+			status:'Unassigned'
 		},
 		{
 			title:'Write a book',
 			description:'finish it before i die(GRRM)',
 			creator:'Kanye East',
 			assignee:'Kim',
-			status:'assigned'
+			status:'Assigned'
 		}
 	]);
 
