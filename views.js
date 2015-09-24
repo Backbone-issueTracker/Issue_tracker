@@ -36,14 +36,14 @@ var TaskView = Backbone.View.extend({
 		}
 ///////////////////
 		// console.log(this.model.attributes.status);
-		
+
 		if((this.model.get("assignee")===this.user.get('username')) || (this.model.get("creator")===this.user.get('username'))){
 			$('#assDiv').append(this.$el);
 		}else if(this.model.get("status")==="Unassigned"){
 			$('#unassDiv').append(this.$el);
 		}
-		
-		
+
+
 	},
 	initialize: function(opts){
 		if(opts){
@@ -56,28 +56,31 @@ var TaskView = Backbone.View.extend({
 		"change select[name='statusSelector']": "changeStatus"
 	},
 	changeStatus: function(){
-		// console.log("change status is happening right now");
+		console.log("a change status is happening right now");
 		var self = this;
+		console.log("Current selection in dropdown is: ", self.$("select[name='statusSelector']").val());
 		var determineAss = function(){
 			if(self.$("select[name='statusSelector']").val()==="Unassigned"){
 				return "";
 			} else {
-				return self.user.get('username');	
+				return self.user.get('username');
 			}
 		};
-		// console.log("we are determining the ass:", determineAss());
+		// console.log("we are determining the assignee");
+		console.log("Removing view");
+		this.remove();
 		this.model.set({
 			status: this.$("select[name='statusSelector']").val(),
 			assignee: determineAss()
 		});
-		
-		this.remove();
+		console.log("The model status is: ", this.model.get("status"));
 	},
 	addView: function(model){
-		console.log("running addview");
-		this.remove();
+		console.log("Adding view");
+		console.log("Current selection in dropdown is: ", this.$("select[name='statusSelector']").val());
+		// this.remove();
 		var task = new TaskView({model:model,user:this.user});
-		this.remove();
+		// this.remove();
 	}
 });
 
