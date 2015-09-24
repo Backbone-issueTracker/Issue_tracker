@@ -1,4 +1,4 @@
-var NavView = Backbone.View.extend({
+/*var NavView = Backbone.View.extend({
   tagName:"nav",
   className: "navbar navbar-inverse",
   id: "navbar",
@@ -23,7 +23,7 @@ var NavView = Backbone.View.extend({
     this.render();
   }
 });
-
+*/
 
 $(document).ready(function(){
 
@@ -31,6 +31,6 @@ $(document).ready(function(){
 
   //$("#login_view").addClass("jumbotron");
 
-  var nav = new NavView();
+  //var nav = new NavView();
 
 });

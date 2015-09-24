@@ -165,6 +165,8 @@ var UserView = Backbone.View.extend({
 		if(opts){this.appdiv=opts.appdiv;}
 		if(opts){this.tasks=opts.tasks;}
 
+		//var createTask = new CreateTaskView();
+
 		this.render();
 		var unass = new UnassignedTasksView({
 			model:TaskModel,
@@ -177,6 +179,9 @@ var UserView = Backbone.View.extend({
 			containerDiv: this.$el,
 			collection: this.tasks,
 			user: this.model
+		});
+		var taskCreate = new TaskCreateView({
+			collection: this.tasks
 		});
 	},
 	events:{
@@ -224,7 +229,12 @@ var LoginView = Backbone.View.extend({
 	initialize: function(opts){
 		if(opts){this.appdiv=opts.appdiv;}
 		if(opts){this.tasks=opts.tasks;}
+
+
 		this.render();
+
+
+
 	},
 	events: {
 		"click #login" : "login"
@@ -239,9 +249,138 @@ var LoginView = Backbone.View.extend({
 			appdiv:this.appdiv,
 			tasks: this.tasks
 		});
+
 		this.remove();
 	}
 });
+
+
+var NavView = Backbone.View.extend({
+  tagName:"nav" ,
+  className: "navbar navbar-inverse" ,
+  id: "navbar" ,
+  render: function() {
+    //Create DOM elements
+    var $container = $('<div class="container-fluid">');
+    var $navbarHeader = $('<div class="navbar-header">');
+    var $logo = $("<a>").attr({
+      href: "#",
+      class:"navbar-brand"
+    }).text("toDo ||");
+    console.log(this);
+    //console.log(this.username);
+		//console.log(this.collection)
+      var $ulNavbarRight = $('<ul class="nav navbar-nav navbar-right">');
+      var $liCreateTask = $('<li>');
+      var $newTaskButton = $( '<button type="button" data-toggle="modal" data-target="#taskCreateView">' );
+      $newTaskButton.text( "+" );
+      $newTaskButton.addClass("btn btn-default");
+      $liCreateTask.append($newTaskButton);
+      $ulNavbarRight.append($liCreateTask);
+    //Attach DOM elements to their respective parent elements
+    $container.append($logo);
+    $container.append($ulNavbarRight);
+    this.$el.append($container);
+    $('body').prepend(this.$el);
+		console.log("======== NavView Rendered  ========");
+    return this
+  },
+  initialize: function(opts){
+		if ( opts ) {
+			this.testAttribute = opts.testAttribute;
+      //this.collection = opts.collection;
+			console.log(opts.testAttribute)
+    }
+    this.render();
+  }
+});
+
+
+var TaskCreateView = Backbone.View.extend({
+  tagName: "div",
+  className: "modal fade",
+  id: "taskCreateView",
+  attributes: {
+    role:"dialog"
+  },
+  render: function() {
+    //Create DOM elements
+
+    //bootstrap containers
+    var $modalDialog = $('<div class="modal-dialog">');
+    var $modalContent = $('<div class="modal-content">');
+
+    //modal-header
+    var $modalHeader = $('<div class="modal-header">');
+    var $modalTitle = $("<h4>").addClass("modal-title").text("New Task");
+    var $modalCloseButton = $('<button data-dismiss="modal" aria-hidden="true">').attr({
+       type:"button",
+       class:"close"
+    }).text("x");
+
+    //modal-body
+    var $modalBody = $('<div class="modal-body">');
+
+    var $newTaskForm = $('<form >').addClass("form-horizontal");
+    var $titleGroup = $('<div class="form-group">');
+    var $taskTitleLabel = $('<label for="title">').addClass("control-label").text("Title");
+    var $taskTitle = $('<input type="text" name="title">').addClass("form-control");
+    var $taskDescriptionLabel = $('<label for="description">').text("Description");
+    var $taskDescription = $('<textarea name="description">').addClass("form-control");
+    var $taskStatusLabel = $('<label for="status">').text("Status");
+    var $statusSelect = $('<select name="status">').addClass("form-control");
+    var $unassignedOption = $('<option value="Unassigned">').text("Unassigned");
+    var $assignedOption = $('<option value="Assigned">').text("Assigned");
+    var $inProgressOption = $('<option value="In Progress">').text("In Progress");
+    var $doneOption = $('<option value="Done">').text("Done");
+
+    //modal-footer
+    var $modalFooter = $('<div class="modal-footer">');
+    var $cancelButton = $('<button data-dismiss="modal">').attr({
+      type: "button",
+      class:"btn btn-default"
+    }).text("cancel");
+    var $createTaskButton = $('<input>').attr({
+      type: "submit",
+      class:"btn btn btn-primary"
+    }).text("Hello World");
+
+    //Attach DOM elements to their respective parent elements
+    $modalHeader.append($modalCloseButton);
+    $modalHeader.append($modalTitle);
+    $statusSelect.append($unassignedOption).append($assignedOption).append($inProgressOption).append($doneOption);
+    $newTaskForm.append($taskTitleLabel).append($taskTitle);
+    $newTaskForm.append($taskDescriptionLabel).append($taskDescription);
+    $newTaskForm.append($taskStatusLabel).append($statusSelect);
+    $modalBody.append($newTaskForm);
+    $modalFooter.append($cancelButton).append($createTaskButton);
+    $modalContent.append($modalHeader).append($modalBody).append($modalFooter);
+    $modalDialog.append($modalContent);
+    this.$el.append($modalDialog);
+    $('body').append(this.$el);
+    console.log("======== TaskCreateView Rendered  ========");
+    return this
+  },
+  initialize: function(opts){
+    this.render();
+  },
+  events:{
+    //User presses submit button in modal
+  }, createTask: function(){
+    console.log(" ++++ Create Task ++++ ");
+    console.log(this);
+		//Model is updated
+    this.collection.create({
+      title:'testTitle',
+      description:'testDescription',
+      creator:'testCreator',
+      assignee:'testAssignee',
+      status:'testStatus',
+	  });
+		//Modal closes
+  }
+});
+
 
 
 // generic ctor to represent interface:
@@ -250,6 +389,10 @@ function GUI(users,tasks,el) {
 		tasks: tasks,
 		collection:users,
 		appdiv: $(el)
+	});
+	var navView = new NavView({
+		//Test attribute
+		testAttribute: "Hello World"
 	});
 	// users is collection of User models
 	// tasks is collection of Task models
