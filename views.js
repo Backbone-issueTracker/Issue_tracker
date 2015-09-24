@@ -59,25 +59,26 @@ var TaskView = Backbone.View.extend({
 		// console.log("change status is happening right now");
 		var self = this;
 		var determineAss = function(){
+			console.log('determining ass');
 			if(self.$("select[name='statusSelector']").val()==="Unassigned"){
 				return "";
 			} else {
 				return self.user.get('username');
 			}
 		};
-		// console.log("we are determining the ass:", determineAss());
-		this.model.set({
+		 console.log("we are determining the ass:");
+	  this.remove();
+	  this.model.set({
 			status: this.$("select[name='statusSelector']").val(),
 			assignee: determineAss()
 		});
 
-		this.remove();
+
+
 	},
 	addView: function(model){
-		console.log("running addview");
-		this.remove();
+//		console.log("running addview");
 		var task = new TaskView({model:model,user:this.user});
-		this.remove();
 	}
 });
 
@@ -113,7 +114,7 @@ var UnassignedTasksView = Backbone.View.extend({
 		});
 
 		// this.listenTo(this.collection, "add", this.addView);
-		this.listenTo(this.collection, "something2", this.something2);
+		//this.listenTo(this.collection, "something2", this.something2);
 	},
 	events:{
 
@@ -198,7 +199,9 @@ var LoginView = Backbone.View.extend({
 		var $loginButtonParagraph = $("<p>");
 		var $loginButton = $("<button id='login' class='btn btn-primary'>").text("login");
 		var $defaultOption = $("<option selected='true' disabled>");
-		$defaultOption.text("select something");
+		var $registerPrompt = $("<h3>").text("No Account? Register Now!");
+		var $register = $('<input type="text" placeholder="**Enter Your Username Here**" style="width:100%">');
+		$defaultOption.text("**Select Your Username**");
 		$selectUser.append($defaultOption);
 		$loginButtonParagraph.append($loginButton);
 		this.collection.models.forEach(function(element,index,array){
@@ -210,7 +213,12 @@ var LoginView = Backbone.View.extend({
 		this.$el.addClass("jumbotron")
 		this.$el.append($welcome);
 		this.$el.append($selectUser);
+
 		this.$el.append($loginButtonParagraph);
+
+
+		this.$el.append($registerPrompt).append($register);
+
 		this.appdiv.append(this.$el);
 	},
 	initialize: function(opts){
