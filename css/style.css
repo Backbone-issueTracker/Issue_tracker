@@ -1,3 +1,7 @@
+button {
+  transition: .5s background;
+}
+
 .list-group-item {
   border-bottom: 3px solid rgba(160,160,160,1.0);
 }
@@ -8,7 +12,7 @@
 }
 
 .navbar-brand::after {
-  content: " not to do";
+  content: " !toDo";
   z-index: -100;
   animation-name: reveal;
   animation-duration: 2s;

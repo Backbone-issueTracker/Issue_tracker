@@ -1,4 +1,4 @@
-var NavView = Backbone.View.extend({
+/*var NavView = Backbone.View.extend({
   tagName:"nav",
   className: "navbar navbar-inverse",
   id: "navbar",
@@ -9,7 +9,7 @@ var NavView = Backbone.View.extend({
     var $logo = $("<a>").attr({
       href: "#",
       class:"navbar-brand"
-    }).text("to do ||");;
+    }).text("toDo ||");;
 
     //Attach DOM elements to their respective parent elements
     $container.append($logo);
@@ -23,14 +23,14 @@ var NavView = Backbone.View.extend({
     this.render();
   }
 });
-
+*/
 
 $(document).ready(function(){
 
   $("#app").addClass("container");
 
-  $("#login_view").addClass("jumbotron");
+  //$("#login_view").addClass("jumbotron");
 
-  var nav = new NavView();
+  //var nav = new NavView();
 
 });
