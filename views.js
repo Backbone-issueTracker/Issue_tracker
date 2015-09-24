@@ -36,14 +36,14 @@ var TaskView = Backbone.View.extend({
 		}
 ///////////////////
 		// console.log(this.model.attributes.status);
-		
+
 		if((this.model.get("assignee")===this.user.get('username')) || (this.model.get("creator")===this.user.get('username'))){
 			$('#assDiv').append(this.$el);
 		}else if(this.model.get("status")==="Unassigned"){
 			$('#unassDiv').append(this.$el);
 		}
-		
-		
+
+
 	},
 	initialize: function(opts){
 		if(opts){
@@ -62,7 +62,7 @@ var TaskView = Backbone.View.extend({
 			if(self.$("select[name='statusSelector']").val()==="Unassigned"){
 				return "";
 			} else {
-				return self.user.get('username');	
+				return self.user.get('username');
 			}
 		};
 		// console.log("we are determining the ass:", determineAss());
@@ -70,7 +70,7 @@ var TaskView = Backbone.View.extend({
 			status: this.$("select[name='statusSelector']").val(),
 			assignee: determineAss()
 		});
-		
+
 		this.remove();
 	},
 	addView: function(model){
@@ -195,19 +195,22 @@ var LoginView = Backbone.View.extend({
 	render: function(){
 		var $welcome = $("<h2>").text("welcome");
 		var $selectUser = $("<select class='selectUser form-control'>");
+		var $loginButtonParagraph = $("<p>");
 		var $loginButton = $("<button id='login' class='btn btn-primary'>").text("login");
 		var $defaultOption = $("<option selected='true' disabled>");
 		$defaultOption.text("select something");
 		$selectUser.append($defaultOption);
+		$loginButtonParagraph.append($loginButton);
 		this.collection.models.forEach(function(element,index,array){
 			var $userOption = $("<option>").attr("value", element.attributes.username);
 			$userOption.text(element.attributes.username);
 			$selectUser.append($userOption);
 		});
 		this.$el.attr("id","login_view");
+		this.$el.addClass("jumbotron")
 		this.$el.append($welcome);
 		this.$el.append($selectUser);
-		this.$el.append($loginButton);
+		this.$el.append($loginButtonParagraph);
 		this.appdiv.append(this.$el);
 	},
 	initialize: function(opts){

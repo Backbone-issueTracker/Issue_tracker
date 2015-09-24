@@ -8,7 +8,7 @@
 }
 
 .navbar-brand::after {
-  content: " not to do";
+  content: " !toDo";
   z-index: -100;
   animation-name: reveal;
   animation-duration: 2s;
