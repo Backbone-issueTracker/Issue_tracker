@@ -70,8 +70,6 @@ var TaskView = Backbone.View.extend({
 			assignee: determineAss()
 		});
 		this.remove();
-
-
 	}
 });
 
@@ -159,8 +157,9 @@ var UserView = Backbone.View.extend({
 		var taskCreate = new TaskCreateView({
 			collection: this.tasks
 		});
-		
+
 		this.listenTo(this.tasks,"change:status", this.addview);
+		this.listenTo(this.tasks, "add", this.addview);
 	},
 	events:{
 		"click #logout": "logout"
@@ -226,7 +225,7 @@ var LoginView = Backbone.View.extend({
 	},
 	updateOnEnter: function(e){
 			if(e.keyCode == 13) {
-				this.collection.add({username:$('#regbox').val()});
+				this.collection.create({username:$('#regbox').val()});
 			}
 	},
 	refreshView: function(){
@@ -360,7 +359,7 @@ var TaskCreateView = Backbone.View.extend({
 		var createTaskAssignee = "y'all";
 		var createTaskStatus = $('select[id="createTaskStatusSelect"]').val();
 		//Collection is updated
-    this.collection.add({
+    this.collection.create({
       title: createTaskTitle,
       description: createTaskDescription,
       creator: createTaskCreator,
