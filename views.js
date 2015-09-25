@@ -82,8 +82,6 @@ var TaskView = Backbone.View.extend({
 			assignee: determineAss()
 		});
 		this.remove();
-
-
 	}
 });
 
@@ -100,13 +98,13 @@ var UnassignedTasksView = Backbone.View.extend({
 		incompleteFind.forEach(function(){
 			x=x+1;
 		});
-		
-		
+
+
 		var $unassPer = ((app.tasks.length-x)/app.tasks.length)*100;
 		console.log("tasks %: ",(app.tasks.length-x)/app.tasks.length);
 		var $unassBarData = $('<div class="progress-bar" style="width: '+ $unassPer + '%">');
-		
-		
+
+
 		//rest of the stuff
 		console.log("el before: ", this.$el);
 		$unassBar.append($unassBarData);
@@ -149,14 +147,14 @@ var UserTasksView = Backbone.View.extend({
 		incompleteFind.forEach(function(){
 			y=y+1;
 		});
-		
+
 		var $unassPer = ((app.tasks.length-y)/app.tasks.length)*100;
 		console.log("tasks %: ",(app.tasks.length-y)/app.tasks.length);
 		var $assBarData = $('<div class="progress-bar" style="width: '+ $unassPer + '%">');
-		
+
 		$assBar.append($assBarData);
-		
-		
+
+
 		this.$el.html('<h3>My Tasks</h3>').append($assBar);
 		this.containerDiv.append(this.$el);
 		this.$el.attr("id","assDiv");
@@ -218,7 +216,7 @@ var UserView = Backbone.View.extend({
 			model:this.model,
 			user:this.model
 		});
-		
+
 		this.listenTo(this.tasks,"change:status", this.addView);
 		this.listenTo(this.tasks, "add", this.addView);
 	},
@@ -286,7 +284,7 @@ var LoginView = Backbone.View.extend({
 	},
 	updateOnEnter: function(e){
 			if(e.keyCode == 13) {
-				this.collection.add({username:$('#regbox').val()});
+				this.collection.create({username:$('#regbox').val()});
 			}
 	},
 	refreshView: function(){
@@ -423,15 +421,15 @@ var TaskCreateView = Backbone.View.extend({
 		var createTaskCreator = this.model.attributes.username;
 		var createTaskAssignee;
 		var createTaskStatus = $('select[id="createTaskStatusSelect"]').val();
-		
+
 		if(createTaskStatus != "Unassigned"){
 			createTaskAssignee = this.model.attributes.username;
 		} else{
 			createTaskAssignee = "";
 		}
-		
+
 		//Collection is updated
-    this.collection.add({
+    this.collection.create({
       title: createTaskTitle,
       description: createTaskDescription,
       creator: createTaskCreator,
