@@ -37,4 +37,28 @@ $("#app").addClass("container");
 
   //var nav = new NavView();
 
+
+var $footer = $('<footer>' , {
+  'class' : 'container'
+});
+
+var $gif_01 = $('<img>' , {
+  "src" : "http://i.giphy.com/z0w3I99Fk9icU.gif"
+});
+
+var $gif_02 = $('<img>' , {
+  "src" : "http://i.giphy.com/NfeV16w5ZvaaQ.gif"
+});
+
+var $gif_03 = $('<img>' , {
+  "src" : "http://i.giphy.com/yZ3EUPGxRL5C0.gif"
+});
+
+$footer.append($gif_01).append($gif_02).append($gif_03);
+$('body').append($footer);
+
+
+
+
+
 });
