@@ -10,7 +10,7 @@ var TaskModel = Backbone.Model.extend({
 		description:'',
 		creator:'',
 		assignee:'',
-		status:'unassigned',
+		status:'',
 	}
 	// Add methods if needed...
 });

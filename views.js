@@ -50,8 +50,8 @@ var TaskView = Backbone.View.extend({
 		if(opts){
 			this.user = opts.user;
 		}
+		// this.listenTo(this.model, "change", this.addView);
 		this.render();
-		this.listenTo(this.model, "change", this.addView);
 	},
 	events:{
 			//Friday Morning -- Pat Changed "name" to "id" -- Did it Break?
@@ -61,27 +61,29 @@ var TaskView = Backbone.View.extend({
 		// console.log("change status is happening right now");
 		var self = this;
 		var determineAss = function(){
-			console.log('determining ass');
+			console.log('determining blank or who');
 			if(self.$("select[id='statusSelector']").val()==="Unassigned"){
 				return "";
 			} else {
 				return self.user.get('username');
 			}
 		};
-		 console.log("we are determining the ass:");
-	  this.remove();
+		 console.log("we determined blank or who");
+
+	  // this.remove();
 	  this.model.set({
 			status: this.$("select[id='statusSelector']").val(),
 			assignee: determineAss()
 		});
+		this.remove();
 
 
-
-	},
-	addView: function(model){
-//		console.log("running addview");
-		var task = new TaskView({model:model,user:this.user});
 	}
+	// addView: function(model){
+	// 	console.log("running addview");
+	// 	console.log(this.user);
+	// 	var task = new TaskView({model:model,user:this.user});
+	// }
 });
 
 var CreateTaskView = Backbone.View.extend({
@@ -115,14 +117,14 @@ var UnassignedTasksView = Backbone.View.extend({
 			var task = new TaskView({model:element,user:self.user});
 		});
 
-		// this.listenTo(this.collection, "add", this.addView);
-		//this.listenTo(this.collection, "something2", this.something2);
+		// this.listenTo(this.collection, "change", this.addView);
 	},
 	events:{
 
 	},
-	addView: function(newModel){
-		var task = new TaskView({model:newModel,user:this.user});
+	addView: function(model){
+		console.log("running addview in unassigned");
+		var task = new TaskView({model:model,user:this.user});
 	}
 });
 
@@ -142,18 +144,21 @@ var UserTasksView = Backbone.View.extend({
 		var assignee= this.collection.where({assignee:this.user.attributes.username});
 		var creator = this.collection.where({creator:this.user.attributes.username});
 		var usertasks = _.union(assignee, creator);
+		console.log("usertasks is: ", usertasks);
 		usertasks.forEach(function(element){
 			var task = new TaskView({model:element,user:self.user});
 		});
-		// this.listenTo(this.collection, "add", this.addView);
+		this.listenTo(this.collection, "change", this.addView);
 	},
 	events:{
 
 	},
-	addView: function(newModel){
-		var task = new TaskView({model:newModel,user:this.user});
+	addView: function(model){
+		console.log("running addview in usertasks");
+		var task = new TaskView({model:model,user:this.user});
 	}
 });
+
 
 var UserView = Backbone.View.extend({
 	render: function() {
@@ -166,8 +171,6 @@ var UserView = Backbone.View.extend({
 	initialize: function(opts) {
 		if(opts){this.appdiv=opts.appdiv;}
 		if(opts){this.tasks=opts.tasks;}
-
-		//var createTask = new CreateTaskView();
 
 		this.render();
 		var unass = new UnassignedTasksView({
