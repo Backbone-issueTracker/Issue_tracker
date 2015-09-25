@@ -16,6 +16,13 @@ $(document).ready( function() { //when DOM is ready...
 			status:'Unassigned'
 		},
 		{
+			title:"The big bug",
+			description:"don't break",
+			creator: "Sparky",
+			assignee:"",
+			status:"Unassigned"
+		},
+		{
 			title:'broken one',
 			description:'this one is broken',
 			creator:'Skippy',
