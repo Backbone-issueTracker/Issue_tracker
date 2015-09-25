@@ -14,7 +14,7 @@ var users = ["Sparky", "Skippy", "Arturo"];
 var tasks = [
   ["Steal Redvines","Run from coppers","Skippy","","Unassigned"],
   ["The big bug","don't break","Sparky","","Unassigned"],
-  ["broken one","this one is broken","Skippy","Skippy","Assigned"],
+  ["broken one","this one is broken","Skippy","Skippy","Done"],
   ["Something","Something else","Anyone","Skippy","Assigned"],
   ["Give Redvines","Hi five coppers","Evil Abe","","Unassigned"],
   ["Write a book","finish it before i die(GRRM)","Kanye East","Arturo","Assigned"]
