@@ -272,6 +272,7 @@ var UserView = Backbone.View.extend({
 		this.remove();
 	},
 	addView: function(Model){
+		Model.save();
 		var tasks = new TaskView({model:Model, user:this.model});
 	}
 
