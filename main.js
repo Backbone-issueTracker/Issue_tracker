@@ -17,17 +17,17 @@ $(document).ready( function() { //when DOM is ready...
 		},
 		{
 			title:"The big bug",
-			description:"don't break",
+			description:"has been defeated",
 			creator: "Sparky",
 			assignee:"",
 			status:"Unassigned"
 		},
 		{
-			title:'broken one',
-			description:'this one is broken',
+			title:'not broken one',
+			description:'this one is not broken',
 			creator:'Skippy',
 			assignee:'Skippy',
-			status:'Assigned'
+			status:'Done'
 		},
 		{
 			title:'Something',
