@@ -199,47 +199,39 @@ var UserView = Backbone.View.extend({
 
 });
 
+
 var LoginView = Backbone.View.extend({
 	render: function(){
 		var $welcome = $("<h2>").text("welcome");
-		var $selectUser = $("<select class='selectUser form-control'>");
-		var $loginButtonParagraph = $("<p>");
+		var $selectUser = $("<select id='selectbar' class='selectUser form-control'>");
 		var $loginButton = $("<button id='login' class='btn btn-primary'>").text("login");
 		var $defaultOption = $("<option selected='true' disabled>");
 		var $registerPrompt = $("<h3>").text("No Account? Register Now!");
-		var $register = $('<input type="text" placeholder="**Enter Your Username Here**" style="width:100%">');
+		var $register = $('<input id="regbox" type="text" placeholder="**Enter Your Username Here**" style="width:100%">');
 		$defaultOption.text("**Select Your Username**");
 		$selectUser.append($defaultOption);
-		$loginButtonParagraph.append($loginButton);
 		this.collection.models.forEach(function(element,index,array){
 			var $userOption = $("<option>").attr("value", element.attributes.username);
 			$userOption.text(element.attributes.username);
 			$selectUser.append($userOption);
 		});
 		this.$el.attr("id","login_view");
-		this.$el.addClass("jumbotron")
+		this.$el.attr("class","jumbotron");
 		this.$el.append($welcome);
 		this.$el.append($selectUser);
-
-		this.$el.append($loginButtonParagraph);
-
-
+		this.$el.append($loginButton);
 		this.$el.append($registerPrompt).append($register);
-
 		this.appdiv.append(this.$el);
 	},
 	initialize: function(opts){
 		if(opts){this.appdiv=opts.appdiv;}
 		if(opts){this.tasks=opts.tasks;}
-
-
 		this.render();
-
-
-
+		this.listenTo(this.collection, "add", this.refreshView);
 	},
 	events: {
-		"click #login" : "login"
+		"click #login" : "login",
+		"keypress input" : "updateOnEnter"
 	},
 	login: function(){
 		var index = _.findIndex(this.collection.models, function(chr) {
@@ -251,11 +243,23 @@ var LoginView = Backbone.View.extend({
 			appdiv:this.appdiv,
 			tasks: this.tasks
 		});
-
 		this.remove();
+	},
+	updateOnEnter: function(e){
+			if(e.keyCode == 13) {
+				this.collection.add({username:$('#regbox').val()});
+			}
+	},
+	refreshView: function(){
+		console.log("refreshView ran");
+		this.remove();
+		var loginView = new LoginView({
+			tasks: this.tasks,
+			collection:this.collection,
+			appdiv: this.appdiv
+		});
 	}
 });
-
 
 var NavView = Backbone.View.extend({
   tagName:"nav" ,
@@ -285,13 +289,13 @@ var NavView = Backbone.View.extend({
     this.$el.append($container);
     $('body').prepend(this.$el);
 		console.log("======== NavView Rendered  ========");
-    return this
+    return this;
   },
   initialize: function(opts){
 		if ( opts ) {
 			this.testAttribute = opts.testAttribute;
       //this.collection = opts.collection;
-			console.log(opts.testAttribute)
+			// console.log(opts.testAttribute)
     }
     this.render();
   }
@@ -361,7 +365,7 @@ var TaskCreateView = Backbone.View.extend({
     this.$el.append($modalDialog);
     $('body').append(this.$el);
     console.log("======== TaskCreateView Rendered  ========");
-    return this
+    return this;
   },
   initialize: function(opts){
     this.render();
