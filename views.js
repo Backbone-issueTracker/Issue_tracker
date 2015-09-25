@@ -9,7 +9,8 @@ var TaskView = Backbone.View.extend({
 		var $desc = $('<h5>').text("Description: " + this.model.get("description"));
 		var $creator = $('<h6>').text("Creator: " + this.model.get("creator"));
 		var $assignee = $('<h6>').text("Assigned to: " + this.model.get("assignee"));
-		var $statusSel = $("<select name='statusSelector' class='statusSel form-control'>");
+			//Friday Morning -- Pat Changed "name" to "id" -- Did it Break?
+		var $statusSel = $("<select id='statusSelector' class='statusSel form-control'>");
 		var $statusOpt1 = $("<option value='Unassigned' class='unass'>").text("Unassigned");
 		var $statusOpt2 = $("<option value='Assigned' class='ass'>").text("Mine");
 		var $statusOpt3 = $("<option value='In Progress' class='prog'>").text("In Progress");
@@ -53,14 +54,15 @@ var TaskView = Backbone.View.extend({
 		this.listenTo(this.model, "change", this.addView);
 	},
 	events:{
-		"change select[name='statusSelector']": "changeStatus"
+			//Friday Morning -- Pat Changed "name" to "id" -- Did it Break?
+		"change select[id='statusSelector']": "changeStatus"
 	},
 	changeStatus: function(){
 		// console.log("change status is happening right now");
 		var self = this;
 		var determineAss = function(){
 			console.log('determining ass');
-			if(self.$("select[name='statusSelector']").val()==="Unassigned"){
+			if(self.$("select[id='statusSelector']").val()==="Unassigned"){
 				return "";
 			} else {
 				return self.user.get('username');
@@ -69,7 +71,7 @@ var TaskView = Backbone.View.extend({
 		 console.log("we are determining the ass:");
 	  this.remove();
 	  this.model.set({
-			status: this.$("select[name='statusSelector']").val(),
+			status: this.$("select[id='statusSelector']").val(),
 			assignee: determineAss()
 		});
 
@@ -321,14 +323,14 @@ var TaskCreateView = Backbone.View.extend({
     //modal-body
     var $modalBody = $('<div class="modal-body">');
 
-    var $newTaskForm = $('<form >').addClass("form-horizontal");
+    var $newTaskForm = $('<form id="createTaskForm">').addClass("form-horizontal");
     var $titleGroup = $('<div class="form-group">');
     var $taskTitleLabel = $('<label for="title">').addClass("control-label").text("Title");
-    var $taskTitle = $('<input type="text" name="title">').addClass("form-control");
+    var $taskTitle = $('<input type="text" id="createTaskTitle" name="title">').addClass("form-control");
     var $taskDescriptionLabel = $('<label for="description">').text("Description");
-    var $taskDescription = $('<textarea name="description">').addClass("form-control");
+    var $taskDescription = $('<textarea id="createTaskDescription" name="description">').addClass("form-control");
     var $taskStatusLabel = $('<label for="status">').text("Status");
-    var $statusSelect = $('<select name="status">').addClass("form-control");
+    var $statusSelect = $('<select id="createTaskStatusSelect" name="status">').addClass("form-control");
     var $unassignedOption = $('<option value="Unassigned">').text("Unassigned");
     var $assignedOption = $('<option value="Assigned">').text("Assigned");
     var $inProgressOption = $('<option value="In Progress">').text("In Progress");
@@ -340,10 +342,10 @@ var TaskCreateView = Backbone.View.extend({
       type: "button",
       class:"btn btn-default"
     }).text("cancel");
-    var $createTaskButton = $('<input>').attr({
-      type: "submit",
+    var $createTaskButton = $('<button id="taskCreate">').attr({
+      role: "button",
       class:"btn btn btn-primary"
-    }).text("Hello World");
+    }).text("Create").attr("data-dismiss","modal");
 
     //Attach DOM elements to their respective parent elements
     $modalHeader.append($modalCloseButton);
@@ -365,19 +367,27 @@ var TaskCreateView = Backbone.View.extend({
     this.render();
   },
   events:{
-    //User presses submit button in modal
-  }, createTask: function(){
-    console.log(" ++++ Create Task ++++ ");
-    console.log(this);
-		//Model is updated
-    this.collection.create({
-      title:'testTitle',
-      description:'testDescription',
-      creator:'testCreator',
-      assignee:'testAssignee',
-      status:'testStatus',
+    		"click #taskCreate": "taskCreate"
+  },
+	taskCreate: function(){
+    console.log(" ++++ Task Create ++++ ");
+		var createTaskTitle = $('input[id="createTaskTitle"]').val();
+		var createTaskDescription = $('textarea[id="createTaskDescription"]').val();
+		var createTaskCreator = "GOD";
+		var createTaskAssignee = "y'all";
+		var createTaskStatus = $('select[id="createTaskStatusSelect"]').val();
+		//Collection is updated
+    this.collection.add({
+      title: createTaskTitle,
+      description: createTaskDescription,
+      creator: createTaskCreator,
+      assignee: createTaskAssignee,
+      status: createTaskStatus
 	  });
-		//Modal closes
+		//Modal closes ====> TBD
+		//Modal Form Elements clear
+		document.getElementById("createTaskForm").reset();
+		console.log(this.collection);
   }
 });
 
