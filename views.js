@@ -22,22 +22,34 @@ var TaskView = Backbone.View.extend({
 
 		//Assigned the correct deafult option for the dropdown
 		if(this.model.get("status")==="Unassigned"){
+			this.$el.addClass("list_item_unassigned");
 			this.$(".unass").attr("selected", "selected");
 		}
 		if(this.model.get("status")==="Assigned"){
+			this.$el.addClass("list_item_assigned");
 			this.$(".ass").attr("selected", "selected");
 		}
 		if(this.model.get("status")==="In Progress"){
+			this.$el.addClass("list_item_progress");
 			this.$(".prog").attr("selected", "selected");
 		}
 		if(this.model.get("status")==="Done"){
+			this.$el.addClass("list_item_done");
 			this.$(".done").attr("selected", "selected");
 		}
 ///////////////////
 		// console.log(this.model.attributes.status);
 
 		if((this.model.get("assignee")===this.user.get('username')) || (this.model.get("creator")===this.user.get('username'))){
-			$('#assDiv').append(this.$el);
+			if(this.model.get("status")==="Unassigned"){
+				$('.unassUL').append(this.$el);
+			}else if(this.model.get("status")==="Assigned"){
+				$('.assUL').append(this.$el);
+			}else if(this.model.get("status")==="In Progress"){
+				$('.progressUL').append(this.$el);
+			}else if(this.model.get("status")==="Done"){
+				$('.doneUL').append(this.$el);
+			}
 		}else if(this.model.get("status")==="Unassigned"){
 			$('#unassDiv').append(this.$el);
 		}
@@ -105,12 +117,20 @@ var UnassignedTasksView = Backbone.View.extend({
 });
 
 var UserTasksView = Backbone.View.extend({
-	tagName: "ul",
-	className: "list-group",
+	// tagName: "ul",
+	// className: "list-group",
 	render: function(){
 		this.$el.html('<h3>My Tasks</h3>');
 		this.containerDiv.append(this.$el);
 		this.$el.attr("id","assDiv");
+		var $unassignedUL = $('<ul class="list-group unassUL">');
+		var $assignedUL = $('<ul class="list-group assUL">');
+		var $progressUL = $('<ul class="list-group progressUL">');
+		var $doneUL = $('<ul class="list-group doneUL">');
+		$(this.$el).append($unassignedUL);
+		$(this.$el).append($assignedUL);
+		$(this.$el).append($progressUL);
+		$(this.$el).append($doneUL);
 	},
 	initialize: function(opts){
 		if(opts){this.containerDiv = opts.containerDiv;
@@ -157,10 +177,13 @@ var UserView = Backbone.View.extend({
 			user: this.model
 		});
 		var taskCreate = new TaskCreateView({
-			collection: this.tasks
+			collection: this.tasks,
+			model:this.model,
+			user:this.model
 		});
 		
-		this.listenTo(this.tasks,"change:status", this.addview);
+		this.listenTo(this.tasks,"change:status", this.addView);
+		this.listenTo(this.tasks, "add", this.addView);
 	},
 	events:{
 		"click #logout": "logout"
@@ -172,7 +195,7 @@ var UserView = Backbone.View.extend({
 		});
 		this.remove();
 	},
-	addview: function(Model){
+	addView: function(Model){
 		var tasks = new TaskView({model:Model, user:this.model});
 	}
 
@@ -347,6 +370,9 @@ var TaskCreateView = Backbone.View.extend({
     return this;
   },
   initialize: function(opts){
+		if(opts){this.appdiv=opts.appdiv;}
+		if(opts){this.tasks=opts.tasks;}
+		if(opts){this.user = opts.user;}
     this.render();
   },
   events:{
@@ -356,9 +382,17 @@ var TaskCreateView = Backbone.View.extend({
     console.log(" ++++ Task Create ++++ ");
 		var createTaskTitle = $('input[id="createTaskTitle"]').val();
 		var createTaskDescription = $('textarea[id="createTaskDescription"]').val();
-		var createTaskCreator = "GOD";
-		var createTaskAssignee = "y'all";
+		console.log("this collection is", this.collection);
+		var createTaskCreator = this.model.attributes.username;
+		var createTaskAssignee;
 		var createTaskStatus = $('select[id="createTaskStatusSelect"]').val();
+		
+		if(createTaskStatus != "Unassigned"){
+			createTaskAssignee = this.model.attributes.username;
+		} else{
+			createTaskAssignee = "";
+		}
+		
 		//Collection is updated
     this.collection.add({
       title: createTaskTitle,
@@ -370,7 +404,7 @@ var TaskCreateView = Backbone.View.extend({
 		//Modal closes ====> TBD
 		//Modal Form Elements clear
 		document.getElementById("createTaskForm").reset();
-		console.log(this.collection);
+		console.log(this.collection)
   }
 });
 
