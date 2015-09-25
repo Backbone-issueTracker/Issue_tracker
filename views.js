@@ -4,7 +4,7 @@ var TaskView = Backbone.View.extend({
 	tagName: "li",
 		className: "list-group-item",
 	render: function(){
-		// console.log("render has been called");
+		console.log("Rendering");
 		var $title= $("<h4>").text(this.model.get("title"));
 		var $desc = $('<h5>').text("Description: " + this.model.get("description"));
 		var $creator = $('<h6>').text("Creator: " + this.model.get("creator"));
@@ -21,7 +21,7 @@ var TaskView = Backbone.View.extend({
 		this.$el.append($title).append($desc).append($creator).append($assignee).append($statusSel);
 
 
-		//Assigned the correct deafult option for the dropdown
+		//Assigned the correct default option for the dropdown
 		if(this.model.get("status")==="Unassigned"){
 			this.$(".unass").attr("selected", "selected");
 		}
@@ -34,6 +34,7 @@ var TaskView = Backbone.View.extend({
 		if(this.model.get("status")==="Done"){
 			this.$(".done").attr("selected", "selected");
 		}
+		// this.$("select[name='statusSelector']").val(this.model.get("status"));
 ///////////////////
 		// console.log(this.model.attributes.status);
 
@@ -43,44 +44,50 @@ var TaskView = Backbone.View.extend({
 			$('#unassDiv').append(this.$el);
 		}
 
-
+		console.log("- New view has been built where dropdown selection is: ", this.$("select[name='statusSelector']").val());
 	},
 	initialize: function(opts){
+		console.log("Initialize has begun");
 		if(opts){
 			this.user = opts.user;
 		}
 		this.render();
-		this.listenTo(this.model, "change", this.addView);
+		console.log("Adding listener");
+		// this.listenTo(this.model, "change", this.addView);
+		// this.listenTo(this.model, "change:status", this.addView);
 	},
 	events:{
 		"change select[name='statusSelector']": "changeStatus"
 	},
 	changeStatus: function(){
-		console.log("a change status is happening right now");
+		console.log("Status change occurred");
 		var self = this;
-		console.log("Current selection in dropdown is: ", self.$("select[name='statusSelector']").val());
+		console.log("- New selection in dropdown is: ", self.$("select[name='statusSelector']").val());
 		var determineAss = function(){
 			if(self.$("select[name='statusSelector']").val()==="Unassigned"){
 				return "";
 			} else {
+				// return _.clone(self.user.get('username'));
 				return self.user.get('username');
 			}
 		};
-		// console.log("we are determining the assignee");
-		console.log("Removing view");
-		this.remove();
+		console.log("- The model status before SET is: ", this.model.get("status"));
+		console.log("- SET Status and Assignee");
 		this.model.set({
 			status: this.$("select[name='statusSelector']").val(),
 			assignee: determineAss()
 		});
-		console.log("The model status is: ", this.model.get("status"));
+		// this.model.trigger("change:status");
+		this.remove();
 	},
 	addView: function(model){
-		console.log("Adding view");
-		console.log("Current selection in dropdown is: ", this.$("select[name='statusSelector']").val());
-		// this.remove();
+		// console.log("Current selection in dropdown is: ", this.$("select[name='statusSelector']").val());
+		console.log("addView method triggered");
+		console.log("- The model status is: ", this.model.get("status"));
+		console.log("- Removing view");
+		this.remove();
+		console.log("- Adding view");
 		var task = new TaskView({model:model,user:this.user});
-		// this.remove();
 	}
 });
 
@@ -116,14 +123,13 @@ var UnassignedTasksView = Backbone.View.extend({
 		});
 
 		// this.listenTo(this.collection, "add", this.addView);
-		this.listenTo(this.collection, "something2", this.something2);
 	},
 	events:{
 
-	},
-	addView: function(newModel){
-		var task = new TaskView({model:newModel,user:this.user});
 	}
+	// addView: function(newModel){
+	// 	var task = new TaskView({model:newModel,user:this.user});
+	// }
 });
 
 var UserTasksView = Backbone.View.extend({
@@ -149,10 +155,10 @@ var UserTasksView = Backbone.View.extend({
 	},
 	events:{
 
-	},
-	addView: function(newModel){
-		var task = new TaskView({model:newModel,user:this.user});
 	}
+	// addView: function(newModel){
+	// 	var task = new TaskView({model:newModel,user:this.user});
+	// }
 });
 
 var UserView = Backbone.View.extend({
@@ -180,6 +186,8 @@ var UserView = Backbone.View.extend({
 			collection: this.tasks,
 			user: this.model
 		});
+
+		this.listenTo(this.tasks, "change:status", this.addView);
 	},
 	events:{
 		"click #logout": "logout"
@@ -190,8 +198,10 @@ var UserView = Backbone.View.extend({
 			appdiv: this.appdiv
 		});
 		this.remove();
+	},
+	addView: function(Model){
+		var task = new TaskView({model:Model,user:this.model});
 	}
-
 });
 
 var LoginView = Backbone.View.extend({
