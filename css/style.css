@@ -12,7 +12,7 @@ button {
 }
 
 .list-group-item {
-  border-bottom: 3px solid rgba(160,160,160,1.0);
+  border-bottom: 5px solid rgba(160,160,160,1.0);
 }
 
 .navbar-brand {
@@ -36,3 +36,44 @@ button {
     opacity: 100;
   }
 }
+
+.list_item_unassigned select{
+  background-color: #D9534F;
+  color:white;
+}
+
+.list_item_assigned select{
+  background-color: #F0AD4E;
+  color:white;
+}
+
+.list_item_progress select{
+  background-color: #5BC0DE;
+  color:white;
+}
+
+.list_item_done select{
+  background-color: #5CB85C;
+  color:white;
+}
+
+.unassUL {
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
+.assUL {
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
+.progressUL {
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
+.doneUL {
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
