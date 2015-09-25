@@ -27,7 +27,11 @@
 
 $(document).ready(function(){
 
-  $("#app").addClass("container");
+$("#app").addClass("container");
+
+  //$(".jumbotron").css("margin-top","120px");
+  //$("#login").css("margin-top","20px");
+  //$("#login").css("margin-bottom","120px");
 
   //$("#login_view").addClass("jumbotron");
 
