@@ -4,12 +4,10 @@ var TaskView = Backbone.View.extend({
 	tagName: "li",
 		className: "list-group-item",
 	render: function(){
-		// console.log("render has been called");
 		var $title= $("<h4>").text(this.model.get("title"));
 		var $desc = $('<h5>').text("Description: " + this.model.get("description"));
 		var $creator = $('<h6>').text("Creator: " + this.model.get("creator"));
 		var $assignee = $('<h6>').text("Assigned to: " + this.model.get("assignee"));
-			//Friday Morning -- Pat Changed "name" to "id" -- Did it Break?
 		var $statusSel = $("<select id='statusSelector' class='statusSel form-control'>");
 		var $statusOpt1 = $("<option value='Unassigned' class='unass'>").text("Unassigned");
 		var $statusOpt2 = $("<option value='Assigned' class='ass'>").text("Mine");
@@ -50,15 +48,12 @@ var TaskView = Backbone.View.extend({
 		if(opts){
 			this.user = opts.user;
 		}
-		// this.listenTo(this.model, "change", this.addView);
 		this.render();
 	},
 	events:{
-			//Friday Morning -- Pat Changed "name" to "id" -- Did it Break?
 		"change select[id='statusSelector']": "changeStatus"
 	},
 	changeStatus: function(){
-		// console.log("change status is happening right now");
 		var self = this;
 		var determineAss = function(){
 			console.log('determining blank or who');
@@ -70,29 +65,12 @@ var TaskView = Backbone.View.extend({
 		};
 		 console.log("we determined blank or who");
 
-	  // this.remove();
 	  this.model.set({
 			status: this.$("select[id='statusSelector']").val(),
 			assignee: determineAss()
 		});
 		this.remove();
 
-
-	}
-	// addView: function(model){
-	// 	console.log("running addview");
-	// 	console.log(this.user);
-	// 	var task = new TaskView({model:model,user:this.user});
-	// }
-});
-
-var CreateTaskView = Backbone.View.extend({
-	render: function(){
-	},
-	initialize: function(opts){
-
-	},
-	events:{
 
 	}
 });
@@ -116,8 +94,6 @@ var UnassignedTasksView = Backbone.View.extend({
 		unassigned.forEach(function(element){
 			var task = new TaskView({model:element,user:self.user});
 		});
-
-		// this.listenTo(this.collection, "change", this.addView);
 	},
 	events:{
 
@@ -148,14 +124,9 @@ var UserTasksView = Backbone.View.extend({
 		usertasks.forEach(function(element){
 			var task = new TaskView({model:element,user:self.user});
 		});
-		this.listenTo(this.collection, "change", this.addView);
 	},
 	events:{
 
-	},
-	addView: function(model){
-		console.log("running addview in usertasks");
-		var task = new TaskView({model:model,user:this.user});
 	}
 });
 
@@ -188,6 +159,8 @@ var UserView = Backbone.View.extend({
 		var taskCreate = new TaskCreateView({
 			collection: this.tasks
 		});
+		
+		this.listenTo(this.tasks,"change:status", this.addview);
 	},
 	events:{
 		"click #logout": "logout"
@@ -198,6 +171,9 @@ var UserView = Backbone.View.extend({
 			appdiv: this.appdiv
 		});
 		this.remove();
+	},
+	addview: function(Model){
+		var tasks = new TaskView({model:Model, user:this.model});
 	}
 
 });
