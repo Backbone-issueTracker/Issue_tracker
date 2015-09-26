@@ -68,14 +68,14 @@ var TaskView = Backbone.View.extend({
 	changeStatus: function(){
 		var self = this;
 		var determineAss = function(){
-			console.log('determining blank or who');
+			// console.log('determining blank or who');
 			if(self.$("select[id='statusSelector']").val()==="Unassigned"){
 				return "";
 			} else {
 				return self.user.get('username');
 			}
 		};
-		 console.log("we determined blank or who");
+		//  console.log("we determined blank or who");
 
 	  this.model.set({
 			status: this.$("select[id='statusSelector']").val(),
@@ -90,7 +90,7 @@ var UnassignedTasksView = Backbone.View.extend({
 	className: "list-group",
 	render: function(){
 
-		this.$el.html('<h3>Unnassigned Tasks</h3>');
+		this.$el.html('<h3 id="tasksh3">Unnassigned Tasks</h3>');
 		this.containerDiv.append(this.$el);
 		this.$el.attr("id","unassDiv");
 	},
@@ -153,7 +153,7 @@ var UserTasksView = Backbone.View.extend({
 		var assignee= this.collection.where({assignee:this.user.attributes.username});
 		var creator = this.collection.where({creator:this.user.attributes.username});
 		var usertasks = _.union(assignee, creator);
-		console.log("usertasks is: ", usertasks);
+		// console.log("usertasks is: ", usertasks);
 		usertasks.forEach(function(element){
 			var task = new TaskView({model:element,user:self.user});
 		});
@@ -166,49 +166,136 @@ var UserTasksView = Backbone.View.extend({
 var TotalTaskBar = Backbone.View.extend({
 	render: function(){
 		//progress bar stuff
-		var $unassBar = $('<div class="progress progress-striped active">');
-		console.log("unassbar: ", $unassBar);
-		var x=0;
-		console.log("total tasks: ", app.tasks.length);
-		var incompleteFind = this.collection.where({status:"Done"});
-		incompleteFind.forEach(function(){
-			x=x+1;
-		});
-
-
-		var $unassPer = ((x)/app.tasks.length)*100;
-		console.log("tasks %: ",(app.tasks.length-x)/app.tasks.length);
-		var $unassBarData = $('<div class="progress-bar" style="width: '+ $unassPer + '%">');
+		var $assBar = $('<div class="progress progress-striped active">');
+		var doneNum=0;
+		var progNum = 0;
+		var unassNum = 0;
+		var assNum = 0;
+		var loggedUser = this.model.attributes.username;
 		
-		$unassBar.append($unassBarData);
-		$(this.$el).append($unassBar);
-		this.containerDiv.append(this.$el);
+		var howDone = this.collection.where({status:"Done"});
+		howDone.forEach(function(element,index){
+				doneNum=doneNum+1;
+		});
+		
+		var howUnass = this.collection.where({status:"Unassigned"});
+		howUnass.forEach(function(element,index){
+					unassNum=unassNum+1;
+		});
+		
+		var howAss = this.collection.where({status:"Assigned"});
+		howAss.forEach(function(element,index){
+				assNum=assNum+1;
+		});
+		
+		
+		var howProg = this.collection.where({status:"In Progress"});
+		howProg.forEach(function(element,index){
+				progNum=progNum+1;
+		});
+		
+		var notDoneLen = this.collection.length;
+		
+
+		var $myDone = (doneNum/notDoneLen)*100;
+		var $myUnass = (unassNum/notDoneLen)*100;
+		var $myProg = (progNum/notDoneLen)*100;
+		var $myAss = (assNum/notDoneLen)*100;
+		
+		var $assBarDone = $('<div class="progress-bar progress-bar-success" style="width: '+ $myDone + '%">');
+		var $assBarUnass = $('<div class="progress-bar progress-bar-danger" style="width: '+ $myUnass + '%">');
+		var $assBarAss = $('<div class="progress-bar progress-bar-warning" style="width: '+ $myAss + '%">');
+		var $assBarProg = $('<div class="progress-bar progress-bar-info" style="width: '+ $myProg + '%">');
+		
+		$assBar.append($assBarUnass);
+		$assBar.append($assBarAss);
+		$assBar.append($assBarProg);
+		$assBar.append($assBarDone);
+		
+		$(this.$el).append($assBar);
+		$('#tasksh3').append($(this.$el));
 	},
 	initialize: function(opts){
 		if(opts){this.containerDiv = opts.containerDiv;
 			this.user=opts.user;}
 		this.render();
 		var self = this;
+		this.listenTo(this.collection, "change:status", this.addBar);
+	},
+	addBar:function(){
+		this.remove();
+		
+		var bar = new TotalTaskBar({
+			containerDiv: this.$el,
+			collection:this.collection,
+			model:this.model
+		});
 	}
-});
+	});
 
 var MyTaskBar = Backbone.View.extend({
 	render: function(){
 		//progress bar stuff
 		var $assBar = $('<div class="progress progress-striped active">');
-		console.log("assbar: ", $assBar);
-		var y=0;
-		console.log("total tasks: ", app.tasks.length);
-		var incompleteFind = this.collection.where({status:"Done"});
-		incompleteFind.forEach(function(){
-			y=y+1;
+		var doneNum=0;
+		var progNum = 0;
+		var unassNum = 0;
+		var assNum = 0;
+		var loggedUser = this.model.attributes.username;
+		
+		var howDone = this.collection.where({status:"Done"});
+		howDone.forEach(function(element,index){
+			if(howDone[index].attributes.assignee === loggedUser || howDone[index].attributes.creator === loggedUser){
+				doneNum=doneNum+1;
+			}
 		});
+		
+		var howUnass = this.collection.where({status:"Unassigned"});
+		howUnass.forEach(function(element,index){
+			if(howUnass[index].attributes.creator === loggedUser){
+				if(howUnass[index].attributes.assignee === ""){
+					unassNum=unassNum+1;
+				}
+			}
+		});
+		
+		var howAss = this.collection.where({status:"Assigned"});
+		howAss.forEach(function(element,index){
+			if(howAss[index].attributes.assignee === loggedUser || howAss[index].attributes.creator === loggedUser){
+				assNum=assNum+1;
+			}
+		});
+		
+		
+		var howProg = this.collection.where({status:"In Progress"});
+		howProg.forEach(function(element,index){
+			if(howProg[index].attributes.assignee === loggedUser || howProg[index].attributes.creator === loggedUser){
+				progNum=progNum+1;
+			}
+		});
+		
+		var notDonenee = this.collection.where({assignee:loggedUser});
+		var notDonetor = this.collection.where({creator:loggedUser});
+		var notDone = _.union(notDonetor,notDonenee);
+		var notDoneLen = notDone.length;
+		
 
-		var $unassPer = ((y)/app.tasks.length)*100;
-		console.log("tasks %: ",(app.tasks.length-y)/app.tasks.length);
-		var $assBarData = $('<div class="progress-bar" style="width: '+ $unassPer + '%">');
+		var $myDone = (doneNum/notDoneLen)*100;
+		var $myUnass = (unassNum/notDoneLen)*100;
+		var $myProg = (progNum/notDoneLen)*100;
+		var $myAss = (assNum/notDoneLen)*100;
+		
+		var $assBarDone = $('<div class="progress-bar progress-bar-success" style="width: '+ $myDone + '%">');
+		var $assBarUnass = $('<div class="progress-bar progress-bar-danger" style="width: '+ $myUnass + '%">');
+		var $assBarAss = $('<div class="progress-bar progress-bar-warning" style="width: '+ $myAss + '%">');
+		var $assBarProg = $('<div class="progress-bar progress-bar-info" style="width: '+ $myProg + '%">');
 
-		$assBar.append($assBarData);
+		
+		$assBar.append($assBarUnass);
+		$assBar.append($assBarAss);
+		$assBar.append($assBarProg);
+		$assBar.append($assBarDone);
+		
 		$(this.$el).append($assBar);
 		$('#mytaskh3').append($(this.$el));
 	},
@@ -217,6 +304,16 @@ var MyTaskBar = Backbone.View.extend({
 			this.user=opts.user;}
 		this.render();
 		var self = this;
+		this.listenTo(this.collection, "change:status", this.addBar);
+	},
+	addBar:function(){
+		this.remove();
+		
+		var bar = new MyTaskBar({
+			containerDiv: this.$el,
+			collection:this.collection,
+			model:this.model
+		});
 	}
 });
 
@@ -250,12 +347,6 @@ var UserView = Backbone.View.extend({
 			model:this.model,
 			user:this.model
 		});
-		
-		// var taskbar = new MyTaskBar({
-		// 	containerDiv: this.$el,
-		// 	collection:this.tasks,
-		// 	model:this.model
-		// });
 
 
 		this.listenTo(this.tasks,"change:status", this.addView);
@@ -330,7 +421,7 @@ var LoginView = Backbone.View.extend({
 			}
 	},
 	refreshView: function(){
-		console.log("refreshView ran");
+		// console.log("refreshView ran");
 		this.remove();
 		var loginView = new LoginView({
 			tasks: this.tasks,
@@ -352,7 +443,7 @@ var NavView = Backbone.View.extend({
       href: "#",
       class:"navbar-brand"
     }).text("toDo ||");
-    console.log(this);
+    // console.log(this);
     //console.log(this.username);
 		//console.log(this.collection)
       var $ulNavbarRight = $('<ul class="nav navbar-nav navbar-right">');
@@ -367,7 +458,7 @@ var NavView = Backbone.View.extend({
     $container.append($ulNavbarRight);
     this.$el.append($container);
     $('body').prepend(this.$el);
-		console.log("======== NavView Rendered  ========");
+		// console.log("======== NavView Rendered  ========");
     return this;
   },
   initialize: function(opts){
@@ -443,7 +534,7 @@ var TaskCreateView = Backbone.View.extend({
     $modalDialog.append($modalContent);
     this.$el.append($modalDialog);
     $('body').append(this.$el);
-    console.log("======== TaskCreateView Rendered  ========");
+    // console.log("======== TaskCreateView Rendered  ========");
     return this;
   },
   initialize: function(opts){
@@ -481,7 +572,7 @@ var TaskCreateView = Backbone.View.extend({
 		//Modal closes ====> TBD
 		//Modal Form Elements clear
 		document.getElementById("createTaskForm").reset();
-		console.log(this.collection)
+		// console.log(this.collection)
   }
 });
 
