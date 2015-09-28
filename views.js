@@ -10,7 +10,7 @@ var TaskView = Backbone.View.extend({
 		var $assignee = $('<h6>').text("Assigned to: " + this.model.get("assignee"));
 		var $statusSel = $("<select id='statusSelector' class='statusSel form-control'>");
 		var $statusOpt1 = $("<option value='Unassigned' class='unass'>").text("Unassigned");
-		var $statusOpt2 = $("<option value='Assigned' class='ass'>").text("Mine");
+		var $statusOpt2 = $("<option value='Assigned' class='ass'>").text("Taken");
 		var $statusOpt3 = $("<option value='In Progress' class='prog'>").text("In Progress");
 		var $statusOpt4 = $("<option value='Done' class='done'>").text("Done");
 
