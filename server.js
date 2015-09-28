@@ -1,60 +1,99 @@
 
 var express = require("express");
 var bodyParser = require("body-parser");
+var orc = require('./secret.js');
+var orchestrate = require('orchestrate')(orc);
+var logger = require('morgan');
 
 var app = express();
+app.use(logger('dev'));
+
+// function Listdb(){
+//   orchestrate.list("1st Collection").then(function (response){
+//     response.body.results.map(function(e,i){
+//       // console.log(e.value);
+//     });
+//   });
+// }
+// 
+// orchestrate.put("1st Collection", "0",{
+// 			"title":"Orch test",
+// 			"description":"better work",
+// 			"creator": "Sparky",
+// 			"assignee":"",
+// 			"status":"Unassigned"
+// }).then(function(res){
+//   Listdb();
+// });
+
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(__dirname));
 
 // var users = [];
-var users = ["Sparky", "Skippy", "Arturo"];
+// var users = ["Sparky", "Skippy", "Arturo"];
 // var tasks = [];
-var tasks = [
-  ["Steal Redvines","Run from coppers","Skippy","","Unassigned"],
-  ["The big bug","don't break","Sparky","","Unassigned"],
-  ["broken one","this one is broken","Skippy","Skippy","Done"],
-  ["Give Redvines","Hi five coppers","Arturo","","Unassigned"],
-  ["Write a book","finish it before i die(GRRM)","Arturo","Arturo","Assigned"]
-];
+// var tasks = [
+//   ["Steal Redvines","Run from coppers","Skippy","","Unassigned"],
+//   ["The big bug","don't break","Sparky","","Unassigned"],
+//   ["broken one","this one is broken","Skippy","Skippy","Done"],
+//   ["Give Redvines","Hi five coppers","Arturo","","Unassigned"],
+//   ["Write a book","finish it before i die(GRRM)","Arturo","Arturo","Assigned"]
+// ];
 
 app.get('/users', function (req, res) {
-  var usersAndIDs = users.map(function (element, index) {
-    return {id: index, username: element};
+  var users;
+  orchestrate.list("users").then(function(data){
+    users=data.body.results;
+  var usersAndIDs = users.map(function (e, index) {
+    var x = {};
+    x.id = e.path.key;
+    x.username = e.value.username;
+    return x;
   });
   res.send(usersAndIDs);
+  console.log("users are: ", usersAndIDs);
+});
 });
 
 app.get('/tasks', function (req, res) {
-  var tasksAndIDs = tasks.map(function (element, index) {
-    return {id: index, title: element[0], description: element[1], creator: element[2], assignee: element[3], status: element[4]};
+  var tasks;
+  orchestrate.list("1st Collection").then(function(data){
+    tasks = data.body.results;
+    var tasksAndIDs = tasks.map(function (e, index) {
+      // var element= e["value"];
+      e.value.id = e.path.key;
+      return e.value;
+    });
+    res.send(tasksAndIDs);
+    console.log("tasks: ", tasksAndIDs);
   });
-  res.send(tasksAndIDs);
 });
 
-app.put('/users/:id', function (req, res) {
-    var id = req.params.id;
-    users[id] = req.body.username;
-    res.send({id: id});
-});
+// app.put('/users/:id', function (req, res) {
+//     var id = req.params.id;
+//     orchestrate.put('users', id, req.body.username);
+//     res.send({id: id});
+// });
 
 app.post('/users', function (req, res) {
-    var id = users.length;
-    users[id] = req.body.username;
-    res.send({id: id});
+  orchestrate.post("users", req.body).then(function(data){
+    res.send({id:data.path.key});
+  });
 });
 
 app.put('/tasks/:id', function (req, res) {
-    var id = req.params.id;
-    tasks[id] = [req.body.title, req.body.description, req.body.creator, req.body.assignee, req.body.status];
-    res.send({id: id});
+  orchestrate.put("1st Collection", String(req.params.id), req.body).then(function(data){
+    res.send({id:req.params.id});
+  });
 });
 
 app.post('/tasks', function (req, res) {
-    var id = tasks.length;
-    tasks[id] = [req.body.title, req.body.description, req.body.creator, req.body.assignee, req.body.status];
-    res.send({id: id});
+  orchestrate.post("1st Collection", req.body).then(function(data){
+    res.send({id: data.path.key});
+  });
 });
 
 
