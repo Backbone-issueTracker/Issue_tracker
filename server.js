@@ -60,7 +60,7 @@ app.get('/users', function (req, res) {
 
 app.get('/tasks', function (req, res) {
   var tasks;
-  orchestrate.list("1st Collection").then(function(data){
+  orchestrate.list("tasks").then(function(data){
     tasks = data.body.results;
     var tasksAndIDs = tasks.map(function (e, index) {
       // var element= e["value"];
@@ -85,14 +85,14 @@ app.post('/users', function (req, res) {
 });
 
 app.put('/tasks/:id', function (req, res) {
-  orchestrate.put("1st Collection", String(req.params.id), req.body).then(function(data){
+  orchestrate.put("tasks", String(req.params.id), req.body).then(function(data){
     res.send({id:req.params.id});
   });
 });
 
 app.post('/tasks', function (req, res) {
-  orchestrate.post("1st Collection", req.body).then(function(data){
-    res.send({id: data.path.key});
+  orchestrate.post("tasks", req.body).then(function(data){
+    res.send("yay");
   });
 });
 
