@@ -221,6 +221,7 @@ var TotalTaskBar = Backbone.View.extend({
 		this.render();
 		var self = this;
 		this.listenTo(this.collection, "change:status", this.addBar);
+		this.listenTo(this.collection, "add", this.addBar);
 	},
 	addBar:function(){
 		this.remove();
@@ -305,6 +306,7 @@ var MyTaskBar = Backbone.View.extend({
 		this.render();
 		var self = this;
 		this.listenTo(this.collection, "change:status", this.addBar);
+		this.listenTo(this.collection, "add", this.addBar);
 	},
 	addBar:function(){
 		this.remove();
@@ -562,7 +564,7 @@ var TaskCreateView = Backbone.View.extend({
 		}
 
 		//Collection is updated
-    this.collection.create({
+    this.collection.add({
       title: createTaskTitle,
       description: createTaskDescription,
       creator: createTaskCreator,
