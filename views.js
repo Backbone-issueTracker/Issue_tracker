@@ -330,8 +330,13 @@ var UserView = Backbone.View.extend({
 	initialize: function(opts) {
 		if(opts){this.appdiv=opts.appdiv;}
 		if(opts){this.tasks=opts.tasks;}
+		if(opts){this.user=opts.user;}
 
 		this.render();
+		
+		
+		
+		
 		var unass = new UnassignedTasksView({
 			model:this.model,
 			containerDiv: this.$el,
@@ -419,7 +424,7 @@ var LoginView = Backbone.View.extend({
 	},
 	updateOnEnter: function(e){
 			if(e.keyCode == 13) {
-				this.collection.create({username:$('#regbox').val()});
+				this.collection.add({username:$('#regbox').val()});
 			}
 	},
 	refreshView: function(){
